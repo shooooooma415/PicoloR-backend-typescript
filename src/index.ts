@@ -1,11 +1,21 @@
 import express from "express";
+import { connectDB } from "./middleware/supabase.config";
 
 const app = express();
+const port = process.env.PORT || 3000;
 
-app.get("/", (req, res) => {
-  res.send("Hello World!");
-});
+async function startServer() {
+  try {
+    await connectDB();
+    console.log("Database接続に成功しました。");
+  } catch (err: any) {
+    console.error(`Database接続に失敗しました: ${err.message}`);
+    process.exit(1); // 接続に失敗した場合、プロセスを終了する
+  }
 
-app.listen(3000, () => {
-  console.log("Server is running on http://localhost:3000");
-});
+  app.listen(port, () => {
+    console.log(`サーバーがポート${port}で起動しました。`);
+  });
+}
+
+startServer();
