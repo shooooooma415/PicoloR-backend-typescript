@@ -10,15 +10,16 @@ import {
   DeleteUserRequest,
 } from "./model/auth.model";
 import { RoomMember } from "./model/room.model";
+import { corsMiddleware } from "./middleware/cors"; // 追加
 
 const app = express();
 app.use(express.json());
+app.use(corsMiddleware); // 追加
 const port = process.env.PORT || 3000;
 let authService: AuthService;
 
 async function startServer() {
   try {
-    await connectDB();
     const db = await connectDB();
     console.log("connect to Database");
 
@@ -58,20 +59,23 @@ app.post(
         UserID: req.body.userID,
       };
       await authService.registerMember(roomMember);
-      res.status(200);
+      res.status(200).send();
     } catch (err: any) {
       res.status(500).json({ error: err.message });
     }
   }
 );
 
-app.delete("/controller/room", async (req: Request<{}, {}, DeleteUserRequest>, res) => {
-  try {
-    const deletedUser = await authService.deleteUserByUserID(req.body.userID);
-    res.status(200);
-  } catch (err: any) {
-    res.status(500).json({ error: err.message });
+app.delete(
+  "/controller/room",
+  async (req: Request<{}, {}, DeleteUserRequest>, res) => {
+    try {
+      const deletedUser = await authService.deleteUserByUserID(req.body.userID);
+      res.status(200).send();
+    } catch (err: any) {
+      res.status(500).json({ error: err.message });
+    }
   }
-});
+);
 
 startServer();
