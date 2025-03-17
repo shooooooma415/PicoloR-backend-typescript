@@ -1,7 +1,9 @@
 export interface User {
-  id: string;
-  name: string;
+  id: UserID;
+  name: UserName;
 }
 
 export type UserName = string;
-export type UserID = string;
+export type UserID = number;
+
+export type RoomID = number;

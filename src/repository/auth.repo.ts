@@ -1,7 +1,7 @@
 import { Pool } from "pg";
 import { User, UserName, UserID } from "../model/auth.model";
 
-class AuthRepositoryImpl {
+class AuthRepository {
   private db: Pool;
 
   constructor(db: Pool) {
@@ -60,4 +60,4 @@ class AuthRepositoryImpl {
   }
 }
 
-export { AuthRepositoryImpl };
+export { AuthRepository };
