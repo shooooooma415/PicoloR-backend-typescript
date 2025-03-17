@@ -13,3 +13,12 @@ export interface CreateColor {
   ColorCodes: ColorCode[];
   RoomId: RoomID;
 }
+
+export interface getColorRes {
+  ColorId: ColorID;
+  ColorCode: ColorCode;
+}
+
+export interface GetColorResponse {
+    themeColors: getColorRes[];
+}

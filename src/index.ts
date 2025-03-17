@@ -12,7 +12,8 @@ import {
   DeleteUserRequest,
 } from "./model/auth.model";
 import { RoomMember } from "./model/room.model";
-import { corsMiddleware } from "./middleware/cors"; // 追加
+import { GetColorResponse } from "./model/color.model";
+import { corsMiddleware } from "./middleware/cors";
 
 const app = express();
 app.use(express.json());
@@ -83,11 +84,11 @@ app.delete(
   }
 );
 
-app.get("/controller/color", async (req, res) => {
+app.get("/controller/color", async (req, res: Response<GetColorResponse | { error: string }>) => {
   try {
     const roomId = parseInt(req.query.roomID as string);
     const color = await colorService.getThemeColors(roomId);
-    res.status(200).json({ color });
+    res.status(200).json({ themeColors: color });
   } catch (err: any) {
     res.status(500).json({ error: err.message });
   }
