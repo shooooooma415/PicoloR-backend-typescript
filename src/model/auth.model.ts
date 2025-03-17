@@ -16,3 +16,8 @@ export interface PostUserRequest {
 export interface PostUserResponse {
 	userID: UserID;
 }
+
+export interface PostMemberRequest {
+	roomID: RoomID;
+    userID: UserID;
+}
