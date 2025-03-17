@@ -73,6 +73,25 @@ class ColorRepository {
       }
     }
   }
+
+  async findColorIDsByRoomID(roomID: RoomID): Promise<ColorID[] | null> {
+    const query = `
+      SELECT id
+      FROM room_colors
+      WHERE room_id = $1
+    `;
+
+    try {
+      const result = await this.db.query(query, [roomID]);
+      return result.rows.map((row) => row.id);
+    } catch (err) {
+      if (err instanceof Error) {
+        throw new Error(`failed to get color IDs: ${err.message}`);
+      } else {
+        throw new Error(`failed to get color IDs: ${String(err)}`);
+      }
+    }
+  }
 }
 
 export { ColorRepository };
