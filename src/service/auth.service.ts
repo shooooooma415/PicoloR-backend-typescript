@@ -2,6 +2,7 @@ import { AuthRepository } from "../repository/auth.repo";
 import { User } from "../model/auth.model";
 import { RoomMember } from "../model/room.model";
 import { RoomRepository } from "../repository/room.repo";
+
 export class AuthService {
   private authRepo: AuthRepository;
   private roomRepo: RoomRepository;
