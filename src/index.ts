@@ -1,8 +1,10 @@
 import express, { Request, Response } from "express";
 import { connectDB } from "./middleware/supabase.config";
 import { AuthService } from "./service/auth.service";
+import { ColorService } from "./service/color.service";
 import { AuthRepository } from "./repository/auth.repo";
 import { RoomRepository } from "./repository/room.repo";
+import { ColorRepository } from "./repository/color.repo";
 import {
   PostUserRequest,
   PostUserResponse,
@@ -10,13 +12,15 @@ import {
   DeleteUserRequest,
 } from "./model/auth.model";
 import { RoomMember } from "./model/room.model";
-import { corsMiddleware } from "./middleware/cors"; // 追加
+import { GetColorResponse } from "./model/color.model";
+import { corsMiddleware } from "./middleware/cors";
 
 const app = express();
 app.use(express.json());
-app.use(corsMiddleware); // 追加
+app.use(corsMiddleware);
 const port = process.env.PORT || 3000;
 let authService: AuthService;
+let colorService: ColorService;
 
 async function startServer() {
   try {
@@ -25,7 +29,9 @@ async function startServer() {
 
     const userRepo = new AuthRepository(db);
     const roomRepo = new RoomRepository(db);
+    const colorRepo = new ColorRepository(db);
     authService = new AuthService(userRepo, roomRepo);
+    colorService = new ColorService(colorRepo);
 
     app.listen(port, () => {
       console.log(`サーバーがポート${port}で起動しました。`);
@@ -77,5 +83,15 @@ app.delete(
     }
   }
 );
+
+app.get("/controller/color", async (req, res: Response<GetColorResponse | { error: string }>) => {
+  try {
+    const roomId = parseInt(req.query.roomID as string);
+    const color = await colorService.getThemeColors(roomId);
+    res.status(200).json({ themeColors: color });
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+});
 
 startServer();

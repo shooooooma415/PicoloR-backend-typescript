@@ -32,7 +32,7 @@ class ColorRepository {
     }
   }
 
-  async getThemeColorsByRoomID(roomID: RoomID): Promise<Color[]> {
+  async findThemeColorsByRoomID(roomID: RoomID): Promise<Color[]> {
     const query = `
       SELECT id, color, room_id
       FROM room_colors
@@ -51,7 +51,7 @@ class ColorRepository {
     }
   }
 
-  async getThemeColorByColorID(colorID: ColorID): Promise<Color | null> {
+  async findThemeColorByColorID(colorID: ColorID): Promise<Color | null> {
     const query = `
       SELECT id, color, room_id
       FROM room_colors
@@ -70,6 +70,25 @@ class ColorRepository {
         throw new Error(`failed to get theme color: ${err.message}`);
       } else {
         throw new Error(`failed to get theme color: ${String(err)}`);
+      }
+    }
+  }
+
+  async findColorIDsByRoomID(roomID: RoomID): Promise<ColorID[] | null> {
+    const query = `
+      SELECT id
+      FROM room_colors
+      WHERE room_id = $1
+    `;
+
+    try {
+      const result = await this.db.query(query, [roomID]);
+      return result.rows.map((row) => row.id);
+    } catch (err) {
+      if (err instanceof Error) {
+        throw new Error(`failed to get color IDs: ${err.message}`);
+      } else {
+        throw new Error(`failed to get color IDs: ${String(err)}`);
       }
     }
   }
