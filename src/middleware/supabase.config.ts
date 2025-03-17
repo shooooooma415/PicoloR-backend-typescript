@@ -9,7 +9,6 @@ function loadEnvFile(): void {
     const envPath = path.join(currentDir, ".env");
     if (fs.existsSync(envPath)) {
       dotenv.config({ path: envPath });
-      console.log(`.envファイルを${envPath}からロードしました。`);
       return;
     }
     const parentDir = path.dirname(currentDir);
@@ -73,9 +72,8 @@ export async function connectDB(config?: SupabaseConfig): Promise<Pool> {
     const client = await pool.connect();
     await client.query("SELECT NOW()");
     client.release();
-    console.log("Database接続に成功しました。");
   } catch (err: any) {
-    throw new Error(`Database接続に失敗しました: ${err.message}`);
+    throw new Error(`fail to connect supabase: ${err.message}`);
   }
 
   return pool;
