@@ -1,11 +1,81 @@
-import express from "express";
+import express, { Request, Response } from "express";
+import { connectDB } from "./middleware/supabase.config";
+import { AuthService } from "./service/auth.service";
+import { AuthRepository } from "./repository/auth.repo";
+import { RoomRepository } from "./repository/room.repo";
+import {
+  PostUserRequest,
+  PostUserResponse,
+  PostMemberRequest,
+  DeleteUserRequest,
+} from "./model/auth.model";
+import { RoomMember } from "./model/room.model";
+import { corsMiddleware } from "./middleware/cors"; // 追加
 
 const app = express();
+app.use(express.json());
+app.use(corsMiddleware); // 追加
+const port = process.env.PORT || 3000;
+let authService: AuthService;
 
-app.get("/", (req, res) => {
-  res.send("Hello World!");
-});
+async function startServer() {
+  try {
+    const db = await connectDB();
+    console.log("connect to Database");
 
-app.listen(3000, () => {
-  console.log("Server is running on http://localhost:3000");
-});
+    const userRepo = new AuthRepository(db);
+    const roomRepo = new RoomRepository(db);
+    authService = new AuthService(userRepo, roomRepo);
+
+    app.listen(port, () => {
+      console.log(`サーバーがポート${port}で起動しました。`);
+    });
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+app.post(
+  "/controller/user",
+  async (
+    req: Request<{}, {}, PostUserRequest>,
+    res: Response<PostUserResponse | { error: string }>
+  ) => {
+    try {
+      const result = await authService.createUser(req.body.userName);
+      res.status(200).json({ userID: result?.id ?? 0 });
+    } catch (err: any) {
+      res.status(500).json({ error: err.message });
+    }
+  }
+);
+
+app.post(
+  "/controller/room",
+  async (req: Request<{}, {}, PostMemberRequest>, res) => {
+    try {
+      const roomMember: RoomMember = {
+        RoomID: req.body.roomID,
+        UserID: req.body.userID,
+      };
+      await authService.registerMember(roomMember);
+      res.status(200).send();
+    } catch (err: any) {
+      res.status(500).json({ error: err.message });
+    }
+  }
+);
+
+app.delete(
+  "/controller/room",
+  async (req: Request<{}, {}, DeleteUserRequest>, res) => {
+    try {
+      const deletedUser = await authService.deleteUserByUserID(req.body.userID);
+      res.status(200).send();
+    } catch (err: any) {
+      res.status(500).json({ error: err.message });
+    }
+  }
+);
+
+startServer();
