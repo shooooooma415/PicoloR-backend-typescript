@@ -2,6 +2,7 @@
   "name": "picolor-backend-typescript",
   "version": "1.0.0",
   "scripts": {
+    "start": "node build/src/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
