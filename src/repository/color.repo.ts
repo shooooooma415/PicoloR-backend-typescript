@@ -32,7 +32,7 @@ class ColorRepository {
     }
   }
 
-  async getThemeColorsByRoomID(roomID: RoomID): Promise<Color[]> {
+  async findThemeColorsByRoomID(roomID: RoomID): Promise<Color[]> {
     const query = `
       SELECT id, color, room_id
       FROM room_colors
@@ -51,7 +51,7 @@ class ColorRepository {
     }
   }
 
-  async getThemeColorByColorID(colorID: ColorID): Promise<Color | null> {
+  async findThemeColorByColorID(colorID: ColorID): Promise<Color | null> {
     const query = `
       SELECT id, color, room_id
       FROM room_colors
