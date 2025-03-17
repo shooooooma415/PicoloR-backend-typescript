@@ -73,7 +73,7 @@ app.post(
 );
 
 app.delete(
-  "/controller/room",
+  "/controller/user",
   async (req: Request<{}, {}, DeleteUserRequest>, res) => {
     try {
       const deletedUser = await authService.deleteUserByUserID(req.body.userID);
