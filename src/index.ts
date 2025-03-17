@@ -7,6 +7,7 @@ import {
   PostUserRequest,
   PostUserResponse,
   PostMemberRequest,
+  DeleteUserRequest,
 } from "./model/auth.model";
 import { RoomMember } from "./model/room.model";
 
@@ -64,10 +65,10 @@ app.post(
   }
 );
 
-app.delete("/controller/room", async (req, res) => {
+app.delete("/controller/room", async (req: Request<{}, {}, DeleteUserRequest>, res) => {
   try {
-    const deletedUser = await authService.deleteUserByUserID(req.body);
-    res.status(200).json(deletedUser?.id);
+    const deletedUser = await authService.deleteUserByUserID(req.body.userID);
+    res.status(200);
   } catch (err: any) {
     res.status(500).json({ error: err.message });
   }

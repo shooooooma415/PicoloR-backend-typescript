@@ -21,3 +21,7 @@ export interface PostMemberRequest {
 	roomID: RoomID;
     userID: UserID;
 }
+
+export interface DeleteUserRequest {
+	userID: UserID;
+}
